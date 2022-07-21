@@ -95,8 +95,17 @@ class Cleaner:
         return self._replace_method
 
     def detect_outliers(self):
+        """
+        This method detects outliers based on the method entered the argument self._detetct_method
+
+        Returns
+        -------
+        List
+        """
+        output = []
         for m in self.detect_method:
-            getattr(self, f"_{m}")
+            output.append(getattr(self, f"_{m}"))
+        return output
 
     def _mean(self):
         pass

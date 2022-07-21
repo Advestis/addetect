@@ -1,2 +1,2 @@
-from adclean.adclean import Adclean
+from adclean.cleaner import Adclean
 import pytest

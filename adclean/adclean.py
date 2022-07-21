@@ -97,6 +97,11 @@ def mahalanobis_distance():
 
 
 def isolation_forest():
+    """
+    The isolation forest attempts to separate each point from the data. In the case of 2D, it randomly creates a line
+    and tries to isolate a point. In this case, an abnormal point can be separated in a few steps, while normal
+    points that are closer together may take many more steps to separate.
+    """
     pass
 
 
@@ -105,4 +110,9 @@ def robust_random_cut_forest():
 
 
 def support_vector_machine():
+    """
+    One-class Support Vector Machine algorithm aims at learning a decision boundary to group the data points. Each
+    data point is classified considering the normalized distance of the data point from the determined decision
+    boundary
+    """
     pass

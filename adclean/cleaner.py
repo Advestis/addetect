@@ -52,7 +52,6 @@ class Cleaner:
     @property
     def serie(self) -> pd.Series:
         """
-
         Returns
         -------
         pd.Series
@@ -97,13 +96,14 @@ class Cleaner:
         """
         return self._replace_method
 
-    def detect_outliers(self):
+    def _detect_outliers(self) -> List[list]:
         """
         This method detects outliers based on the method entered the argument self._detetct_method
 
         Returns
         -------
-        List
+        list
+            list containing the outliers according to the method
         """
         output = []
         for m in self.detect_method:
@@ -121,6 +121,7 @@ class Cleaner:
         Returns
         -------
         list
+             list containing the outliers
         """
         pass
 
@@ -135,6 +136,7 @@ class Cleaner:
         Returns
         -------
         list
+            List containing the outliers
         """
         pass
 

@@ -17,7 +17,7 @@ def test_init(serie, detect_method, replace_method, output):
 @pytest.mark.parametrize(
     "cleaner, output",
     [
-        (Cleaner.pd.Series([1, 2, 6, 3]), [3])
+        (Cleaner(pd.Series([1, 2, 6, 3])), [3])
     ]
 )
 def test_mean(cleaner, output):
@@ -92,3 +92,63 @@ def test_angular_based_outlier_detection(cleaner, output):
 )
 def test_dbscan_clustering(cleaner, output):
     assert (cleaner._dbscan_clustering() == output)
+
+
+@pytest.mark.parametrize(
+    "cleaner, output",
+    [
+        (Cleaner(pd.Series([6, 2, 900])), [900])
+    ]
+)
+def test_kmeans_clustering(cleaner, output):
+    assert (cleaner._kmeans_clustering() == output)
+
+
+@pytest.mark.parametrize(
+    "cleaner, output",
+    [
+        (Cleaner(pd.Series([3, 8, 750])), [750])
+    ]
+)
+def test_knearest_neighbor(cleaner, output):
+    assert (cleaner._knearest_neighbor() == output)
+
+
+@pytest.mark.parametrize(
+    "cleaner, output",
+    [
+        (Cleaner(pd.Series([3, 4, 650])), [650])
+    ]
+)
+def test_mahalanobis_distance(cleaner, output):
+    assert (cleaner._mahalanobis_distance() == output)
+
+
+@pytest.mark.parametrize(
+    "cleaner, output",
+    [
+        (Cleaner(pd.Series([3, 2, 550])), [550])
+    ]
+)
+def test_isolation_forest(cleaner, output):
+    assert (cleaner._isolation_forest() == output)
+
+
+@pytest.mark.parametrize(
+    "cleaner, output",
+    [
+        (Cleaner(pd.Series([5, 2, 50])), [50])
+    ]
+)
+def test_robust_random_cut_forest(cleaner, output):
+    assert (cleaner._robust_random_cut_forest() == output)
+
+
+@pytest.mark.parametrize(
+    "cleaner, output",
+    [
+        (Cleaner(pd.Series([5, 6, 150])), [150])
+    ]
+)
+def test_support_vector_machine(cleaner, output):
+    assert (cleaner._support_vector_machine() == output)

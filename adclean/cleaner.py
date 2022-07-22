@@ -1,4 +1,6 @@
 from typing import List, Optional
+
+import numpy as np
 import pandas as pd
 
 
@@ -71,10 +73,8 @@ class Cleaner:
 
     @property
     def serie(self) -> pd.Series:
-        """Describe what 'series' is
-
-        No 'Returns' section in @property
-        No docstring in the setter, all should be documented in the property
+        """
+        Series is the timesseries for which we want to find the outliers
         """
         return self._serie
 
@@ -87,16 +87,46 @@ class Cleaner:
     @property
     def detect_method(self) -> List[str]:
         """
-        Getter from detect_method attribut -> you don't say ! Instead, explain what the detect method is.
+        "detect_method" is the list containing the detect methods with which we want to find the outliers
         """
         return self._detect_method
 
     @property
     def replace_method(self) -> List[str]:
         """
-        Getter from replace_method attribut -> you don't say ! Instead, explain what the replace method is.
+        "replace_method" is the list containing the replace methods with which we want to replace the outliers
         """
         return self._replace_method
+
+    def get_zscore(self, value) -> int:
+        """
+        Computes the zscore of "value". "value" corresponding to a value of self._serie.
+
+        Parameters
+        ----------
+        value : int
+
+        Returns
+        -------
+        int
+            zscore of value
+        """
+        mean = np.mean(self.serie.iloc[::, 1])
+        std = np.std(self.serie.iloc[::, 1])
+        z_score = (value - mean) / std
+        return np.abs(z_score)
+
+    def _z_score(self) -> pd.Series:
+        """
+        This method detects outliers from the z_score
+
+        Returns
+        -------
+        pd.Series
+            series containing date and value of outliers
+        """
+        self.serie["z-score"] = self.serie.iloc[1].dropna().apply(lambda x: self.serie.get_zscore(x).dropna())
+        return self.serie[self.serie["z-score"] > 3]
 
     def _detect_outliers(self) -> List[list]:
         """
@@ -151,8 +181,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]  -> outliers is not a defined object. Either just return 'list', or
-                           List[<some existing python object>]
+        list
             List containing the outliers
         """
         pass
@@ -164,7 +193,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]  -> idem
+        list
             List containing the outliers
         """
         pass
@@ -175,7 +204,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]  -> idem
+        list
             List containing the outliers
         """
         pass
@@ -187,7 +216,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]  -> idem
+        list
             List containing the outliers
         """
         pass
@@ -201,7 +230,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]  -> idem
+        list
             List containing the outliers
         """
         pass
@@ -213,7 +242,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]  -> idem
+        list
             List containing the outliers
         """
         pass
@@ -227,7 +256,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]  -> idem
+        list
             List containing the outliers
         """
         pass
@@ -240,7 +269,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]  -> idem
+        list
             List containing the outliers
         """
         pass
@@ -253,7 +282,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]  -> idem
+        list
             List containing the outliers
         """
         pass
@@ -266,7 +295,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]  -> idem
+        list
             List containing the outliers
         """
         pass
@@ -280,7 +309,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]  -> idem
+        list
             List containing the outliers
         """
         pass
@@ -296,7 +325,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]  -> idem
+        list
             List containing the outliers
         """
         pass

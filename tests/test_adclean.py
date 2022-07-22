@@ -40,14 +40,15 @@ def test_max(cleaner, maximum, output):
 def test_min(cleaner, minimum, output):
     assert cleaner._minimum(minimum) == output
 
-@pytest.mark.parametrize(
-    "cleaner, output",
-    [
-        (Cleaner(pd.Series([1, 2, 6, 3])), [3])
-    ]
-)
-def test_mean(cleaner, output):
-    assert (cleaner._mean() == output)
+
+# @pytest.mark.parametrize(
+#     "cleaner, output",
+#     [
+#         (Cleaner(pd.Series([1, 2, 6, 3])), [3])
+#     ]
+# )
+# def test_mean(cleaner, output):
+#     assert (cleaner._mean() == output)
 
 
 @pytest.mark.parametrize(

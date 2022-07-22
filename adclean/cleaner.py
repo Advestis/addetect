@@ -140,9 +140,6 @@ class Cleaner:
         """
         pass
 
-    def _mean(self):
-        pass
-
     def _standard_deviation(self):
         """
         Points within 3 standard deviations of the mean constitute only about 1% of the distribution.

@@ -24,6 +24,7 @@ class Cleaner:
         serie : pd.Series
         detect_method : List[str]
         replace_method : List[str]
+
         Raises
         ---------
         ValueError, TypeError
@@ -144,6 +145,11 @@ class Cleaner:
         """
         Points within 3 standard deviations of the mean constitute only about 1% of the distribution.
         These points are atypical of the majority of the other points and are likely to be outliers.
+
+        Returns
+        -------
+        List[outliers]
+            List containing the outliers
         """
         pass
 
@@ -151,12 +157,22 @@ class Cleaner:
         """
         A Gaussian mixture model is a probabilistic model that assumes that all data points are generated
         from a mixture of a finite number of Gaussian distributions with unknown parameters.
+
+        Returns
+        -------
+        List[outliers]
+            List containing the outliers
         """
         pass
 
     def _extreme_value_analysis(self):
         """
         Estimation of the probability of the rarest events compared to those previously compared.
+
+        Returns
+        -------
+        List[outliers]
+            List containing the outliers
         """
         pass
 
@@ -164,6 +180,11 @@ class Cleaner:
         """
         In anomaly detection, the local outlier factor is an algorithm that finds anomalous data points
         by measuring the local deviation of a given data point from its neighbours.
+
+        Returns
+        -------
+        List[outliers]
+            List containing the outliers
         """
         pass
 
@@ -173,6 +194,11 @@ class Cleaner:
         local outlier factor (LOF) technique. The idea of the connectivity-based outlier algorithm is to assign a degree
         of outlier to each data point. This degree of outlier is called the connectivity-based outlier factor (COF) of
         the data point. A high COF of a data point represents a high probability of being an outlier.
+
+        Returns
+        -------
+        List[outliers]
+            List containing the outliers
         """
         pass
 
@@ -180,6 +206,11 @@ class Cleaner:
         """
         The approach called ABOD (Angle-based Outlier Detection) evaluates the degree of outlier on the variance of
         angles (VOA) between a point and all other pairs of points in the data set.
+
+        Returns
+        -------
+        List[outliers]
+            List containing the outliers
         """
         pass
 
@@ -189,6 +220,11 @@ class Cleaner:
         Therefore, clustering algorithms look for similarities or dissimilarities among data points. Clustering is an
         unsupervised learning method so there is no label associated with data points. The algorithm tries to find the
         underlying structure of the data.
+
+        Returns
+        -------
+        List[outliers]
+            List containing the outliers
         """
         pass
 
@@ -197,6 +233,11 @@ class Cleaner:
         Groups data points into k clusters based on their feature values. The scores of each data point within a cluster
         are calculated as the distance to its centroid. Data points that are far from the centroid of their clusters are
         labelled as anomalies.
+
+        Returns
+        -------
+        List[outliers]
+            List containing the outliers
         """
         pass
 
@@ -205,6 +246,11 @@ class Cleaner:
         For each data point, the whole set of data points is examined to extract the k items that have the most similar
         feature values: these are the k nearest neighbors (NN). Then, the data point is classified as anomalous if the
         majority of NN was previously classified as anomalous.
+
+        Returns
+        -------
+        List[outliers]
+            List containing the outliers
         """
         pass
 
@@ -212,7 +258,12 @@ class Cleaner:
         """
         Calculates the distance to the barycentre taking into account the shape of all data points. In an area of high
         density, a point that deviates from the others (its immediate neighbours) should raise more questions than when
-        it is located in a less dense area
+        it is located in a less dense area.
+
+        Returns
+        -------
+        List[outliers]
+            List containing the outliers
         """
         pass
 
@@ -222,6 +273,11 @@ class Cleaner:
         it randomly creates a line
         and tries to isolate a point. In this case, an abnormal point can be separated in a few steps, while normal
         points that are closer together may take many more steps to separate.
+
+        Returns
+        -------
+        List[outliers]
+            List containing the outliers
         """
         pass
 
@@ -232,6 +288,11 @@ class Cleaner:
         """
         One-class Support Vector Machine algorithm aims at learning a decision boundary to group the data points. Each
         data point is classified considering the normalized distance of the data point from the determined decision
-        boundary
+        boundary.
+
+        Returns
+        -------
+        List[outliers]
+            List containing the outliers
         """
         pass

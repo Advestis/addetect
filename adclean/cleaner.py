@@ -1,49 +1,69 @@
-from typing import List
+from typing import List, Optional
 import pandas as pd
 
 
 class Cleaner:
-    detec_method = ["standard_deviation", "gaussian_mixture_model", "extreme_value_analysis", "local_outlier_factor",
-                    "connectivity_based_outlier_detection", "angular_based_outlier_detection", "dbscan_clustering",
-                    "kmeans_clustering", "knearest_neighbor", "mahalanobis_distance", "isolation_forest",
-                    "support_vector_machine", "minimum", "maximum"]
+    DETEC_METHOD = [
+        "standard_deviation",
+        "gaussian_mixture_model",
+        "extreme_value_analysis",
+        "local_outlier_factor",
+        "connectivity_based_outlier_detection",
+        "angular_based_outlier_detection",
+        "dbscan_clustering",
+        "kmeans_clustering",
+        "knearest_neighbor",
+        "mahalanobis_distance",
+        "isolation_forest",
+        "support_vector_machine",
+        "minimum",
+        "maximum",
+    ]
 
     # TODO : Add the different replace methods
-    repl_method = ["median"]
+    REPL_METHOD = ["median"]
 
-    # TODO : Verif the type of the index @eguir
-    def __init__(self, serie: pd.Series = None, detect_method: List[str] = None,
-                 replace_method: List[str] = None):
+    # TODO : Verif the type of the index @eguir HINT (pcotte): use 'adtypingdecorator'
+    def __init__(
+        self,
+        serie: Optional[pd.Series] = None,
+        detect_methods: Optional[List[str]] = None,
+        replace_method: Optional[List[str]] = None,
+    ):
         """
-        The constructor of the Cleaner class, by default the series can be None but will have to be entered later
-        using the setter if detect_method is not entered then by default it will use the standard_deviation method,
-        the replacement method can be empty but by default it will take the replacement method mean
+        The constructor of the Cleaner class
 
         Parameters
         ----------
         serie : pd.Series
-        detect_method : List[str]
+            If None, will have to be specified later by setting the instance's 'series' attribute
+        detect_methods : List[str]
+            If None, will default to 'standard_deviation'
         replace_method : List[str]
+            If None, will defaul to 'median'
 
         Raises
         ---------
-        ValueError, TypeError
+        TypeError
+            If 'series' is not a pd.Series object
+        ValueError
+            If any of the detection methods or replace methods is unknown by the class
         """
-        if type(serie) != pd.Series:
+        if not isinstance(serie, pd.Series):
             raise TypeError(f"The type of the series must be pd.Series and not {type(serie)}")
         self._serie = serie
-        if detect_method is not None:
-            for d_meth in detect_method:
-                if d_meth not in self.detec_method:
-                    raise ValueError(f"The detection method {d_meth} does not exist in {self.detec_method}")
+        if detect_methods is not None:
+            for d_meth in detect_methods:
+                if d_meth not in self.DETEC_METHOD:
+                    raise ValueError(f"The detection method {d_meth} does not exist in {self.DETEC_METHOD}")
         if replace_method is not None:
             for r_meth in replace_method:
-                if r_meth not in self.repl_method:
-                    raise ValueError(f"The replace method {r_meth} does not exist in {self.repl_method}")
-        if detect_method is None:
+                if r_meth not in self.REPL_METHOD:
+                    raise ValueError(f"The replace method {r_meth} does not exist in {self.REPL_METHOD}")
+        if detect_methods is None:
             self._detect_method = ["standard_deviation"]
         else:
-            self._detect_method = detect_method
+            self._detect_method = detect_methods
         if replace_method is None:
             self._replace_method = ["median"]
         else:
@@ -51,54 +71,36 @@ class Cleaner:
 
     @property
     def serie(self) -> pd.Series:
-        """
-        Returns
-        -------
-        pd.Series
+        """Describe what 'series' is
+
+        No 'Returns' section in @property
+        No docstring in the setter, all should be documented in the property
         """
         return self._serie
 
     @serie.setter
     def serie(self, values: pd.Series):
-        """
-
-        Parameters
-        ----------
-        values : pd.Series
-
-        Raises
-        -------
-        TypeError
-        """
-        if type(values) != pd.Series:
+        if not isinstance(values, pd.Series):
             raise TypeError(f"The type of the series must be pd.Series and not {type(values)}")
         self._serie = values
 
     @property
     def detect_method(self) -> List[str]:
         """
-        Getter from detect_method attribut
-
-        Returns
-        -------
-        List[str]
+        Getter from detect_method attribut -> you don't say ! Instead, explain what the detect method is.
         """
         return self._detect_method
 
     @property
     def replace_method(self) -> List[str]:
         """
-        Getter from replace_method attribut
-
-        Returns
-        -------
-        List[str]
+        Getter from replace_method attribut -> you don't say ! Instead, explain what the replace method is.
         """
         return self._replace_method
 
     def _detect_outliers(self) -> List[list]:
         """
-        This method detects outliers based on the method entered the argument self._detetct_method
+        This method detects outliers based on self._detetct_method
 
         Returns
         -------
@@ -145,9 +147,12 @@ class Cleaner:
         Points within 3 standard deviations of the mean constitute only about 1% of the distribution.
         These points are atypical of the majority of the other points and are likely to be outliers.
 
+        -> '3' could be a parameter of the method. One might one 5, for instance.
+
         Returns
         -------
-        List[outliers]
+        List[outliers]  -> outliers is not a defined object. Either just return 'list', or
+                           List[<some existing python object>]
             List containing the outliers
         """
         pass
@@ -159,7 +164,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]
+        List[outliers]  -> idem
             List containing the outliers
         """
         pass
@@ -170,7 +175,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]
+        List[outliers]  -> idem
             List containing the outliers
         """
         pass
@@ -182,7 +187,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]
+        List[outliers]  -> idem
             List containing the outliers
         """
         pass
@@ -196,7 +201,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]
+        List[outliers]  -> idem
             List containing the outliers
         """
         pass
@@ -208,7 +213,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]
+        List[outliers]  -> idem
             List containing the outliers
         """
         pass
@@ -222,7 +227,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]
+        List[outliers]  -> idem
             List containing the outliers
         """
         pass
@@ -235,7 +240,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]
+        List[outliers]  -> idem
             List containing the outliers
         """
         pass
@@ -248,7 +253,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]
+        List[outliers]  -> idem
             List containing the outliers
         """
         pass
@@ -261,7 +266,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]
+        List[outliers]  -> idem
             List containing the outliers
         """
         pass
@@ -275,7 +280,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]
+        List[outliers]  -> idem
             List containing the outliers
         """
         pass
@@ -291,7 +296,7 @@ class Cleaner:
 
         Returns
         -------
-        List[outliers]
+        List[outliers]  -> idem
             List containing the outliers
         """
         pass

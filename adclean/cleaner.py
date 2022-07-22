@@ -3,12 +3,15 @@ import pandas as pd
 
 
 class Cleaner:
-    # TODO : Add the different detection methods
-    detec_method = ["standard_deviation", "..."]
+    detec_method = ["standard_deviation", "gaussian_mixture_model", "extreme_value_analysis", "local_outlier_factor",
+                    "connectivity_based_outlier_detection", "angular_based_outlier_detection", "dbscan_clustering",
+                    "kmeans_clustering", "knearest_neighbor", "mahalanobis_distance", "isolation_forest",
+                    "support_vector_machine"]
 
     # TODO : Add the different replace methods
-    repl_method = ["mean"]
+    repl_method = ["median"]
 
+    # TODO : Verif the type of the index @eguir
     def __init__(self, serie: pd.Series = None, detect_method: List[str] = None,
                  replace_method: List[str] = None):
         """
@@ -28,21 +31,20 @@ class Cleaner:
         if type(serie) != pd.Series:
             raise TypeError(f"The type of the series must be pd.Series and not {type(serie)}")
         self._serie = serie
-
         if detect_method is not None:
             for d_meth in detect_method:
                 if d_meth not in self.detec_method:
-                    raise ValueError(f"The detection method {d_meth} does not exist in {self.detec_method} ")
+                    raise ValueError(f"The detection method {d_meth} does not exist in {self.detec_method}")
         if replace_method is not None:
             for r_meth in replace_method:
                 if r_meth not in self.repl_method:
-                    raise ValueError(f"The detection method {r_meth} does not exist in {self.repl_method} ")
+                    raise ValueError(f"The replace method {r_meth} does not exist in {self.repl_method}")
         if detect_method is None:
             self._detect_method = ["standard_deviation"]
         else:
             self._detect_method = detect_method
         if replace_method is None:
-            self._replace_method = ["mean"]
+            self._replace_method = ["median"]
         else:
             self._replace_method = replace_method
 
@@ -106,6 +108,9 @@ class Cleaner:
         for m in self.detect_method:
             output.append(getattr(self, f"_{m}"))
         return output
+
+
+
 
     def _mean(self):
         pass

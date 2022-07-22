@@ -19,3 +19,23 @@ def test_init(serie, detect_method, replace_method, output):
         assert Cleaner(serie, detect_method, replace_method).serie.equals(output)
     except Exception as e:
         assert output in str(e)
+
+
+@pytest.mark.parametrize(
+    "cleaner, maximum, output",
+    [
+        (Cleaner(serie=pd.Series([200, 210, 700, 240]), detect_method=["maximum"]), 500, [700])
+    ]
+)
+def test_max(cleaner, maximum, output):
+    assert cleaner._maximum(maximum) == output
+
+
+@pytest.mark.parametrize(
+    "cleaner, minimum, output",
+    [
+        (Cleaner(serie=pd.Series([200, 210, 5, 240]), detect_method=["minimum"]), 100, [5])
+    ]
+)
+def test_min(cleaner, minimum, output):
+    assert cleaner._minimum(minimum) == output

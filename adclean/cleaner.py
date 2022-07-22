@@ -6,7 +6,7 @@ class Cleaner:
     detec_method = ["standard_deviation", "gaussian_mixture_model", "extreme_value_analysis", "local_outlier_factor",
                     "connectivity_based_outlier_detection", "angular_based_outlier_detection", "dbscan_clustering",
                     "kmeans_clustering", "knearest_neighbor", "mahalanobis_distance", "isolation_forest",
-                    "support_vector_machine"]
+                    "support_vector_machine", "minimum", "maximum"]
 
     # TODO : Add the different replace methods
     repl_method = ["median"]
@@ -109,8 +109,33 @@ class Cleaner:
             output.append(getattr(self, f"_{m}"))
         return output
 
+    def _minimum(self, minimum: int) -> List:
+        """
+        Detects outliers with respect to a given minimum
 
+        Parameters
+        ----------
+        minimum : int
 
+        Returns
+        -------
+        list
+        """
+        pass
+
+    def _maximum(self, maximum: int) -> List:
+        """
+        Detects outliers with respect to a given maximum
+
+        Parameters
+        ----------
+        maximum : int
+
+        Returns
+        -------
+        list
+        """
+        pass
 
     def _mean(self):
         pass

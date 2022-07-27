@@ -1,12 +1,20 @@
 from typing import List, Optional
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import scipy
+from scipy import stats
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Cleaner:
     DETEC_METHOD = [
         "standard_deviation",
+        "iqr",
+        "zscore",
         "gaussian_mixture_model",
         "extreme_value_analysis",
         "local_outlier_factor",
@@ -27,10 +35,10 @@ class Cleaner:
 
     # TODO : Verif the type of the index @eguir HINT (pcotte): use 'adtypingdecorator'
     def __init__(
-        self,
-        serie: Optional[pd.Series] = None,
-        detect_methods: Optional[List[str]] = None,
-        replace_method: Optional[List[str]] = None,
+            self,
+            serie: Optional[pd.Series] = None,
+            detect_methods: Optional[List[str]] = None,
+            replace_method: Optional[List[str]] = None,
     ):
         """
         The constructor of the Cleaner class
@@ -111,23 +119,83 @@ class Cleaner:
         int
             zscore of value
         """
-        mean = np.mean(self.serie.iloc[::, 1])
-        std = np.std(self.serie.iloc[::, 1])
+        mean = np.mean(self.serie)
+        std = np.std(self.serie)
         z_score = (value - mean) / std
         return np.abs(z_score)
 
-    def _z_score(self) -> pd.Series:
+    def _verif_norm(self, alpha_level=0.05):
+        serie = self.serie.dropna()
+        print(serie, "hjunnnnifcccc")
+        df_res = pd.DataFrame(serie)
+        ks = stats.ks_1samp(serie, stats.norm.cdf)
+        print(ks)
+        df_res.loc["p-value", serie.name] = ks.pvalue
+        if df_res.loc["p-value", serie.name] < alpha_level:
+            return True
+        else:
+            return False
+
+    def _zscore(self) -> pd.Series:
         """
         This method detects outliers from the z_score
 
         Returns
         -------
         pd.Series
-            series containing date and value of outliers
+            outliers is a series containing date and value of outliers
         """
-        self.serie["z-score"] = self.serie.iloc[1].dropna().apply(lambda x: self.serie.get_zscore(x).dropna())
-        return self.serie[self.serie["z-score"] > 3]
+        serie = self.serie.dropna()
+        res = pd.DataFrame(serie)
+        res["z-score"] = serie.apply(lambda x: self.get_zscore(x))
+        res = res[res["z-score"] > 3]
+        outliers = res[serie.name]
+        return outliers
 
+    def _iqr(self) -> pd.Series:
+        """
+        This method entails using the 1st quartile, 3rd quartile, and IQR to define the lower bound and upper bound
+        for the data points.
+
+        Returns
+        -------
+        pd.Series
+            outliers is a series containing date and value of outliers
+        """
+        serie = self.serie.dropna()
+        quantile_1 = np.quantile(serie, 0.25)
+        quantile_3 = np.quantile(serie, 0.75)
+        iqr = quantile_3 - quantile_1
+        lower_bound = quantile_1 - 1.5 * iqr
+        upper_bound = quantile_3 + 1.5 * iqr
+
+        outliers = serie[(serie < lower_bound) | (serie > upper_bound)]
+        return outliers
+
+    def _standard_deviation(self) -> pd.Series:
+        """
+        This method find the outliers with the standard deviation
+
+        Returns
+        -------
+        pd.Series
+            outliers is a series containing date and value of outliers
+        Raises
+        -------
+            ValueError
+        """
+        if self._verif_norm() is False:
+            # TODO maybe change the type of error
+            raise ValueError("The series does not follow a normal law, so we cannot use this method")
+        serie = self.serie.dropna()
+        mean, std = np.mean(serie), np.std(serie)
+        cut_off = std * 3
+        lower, upper = mean - cut_off, mean + cut_off
+        outliers = serie[(serie < lower) | (serie > upper)]
+
+        return outliers
+
+    # TODO pytest @eguir
     def _detect_outliers(self) -> List[list]:
         """
         This method detects outliers based on self._detetct_method
@@ -172,19 +240,33 @@ class Cleaner:
         """
         pass
 
-    def _standard_deviation(self):
+    # TODO pyetst @eguir
+    def replace_by_median(self, outliers) -> pd.Series:
         """
-        Points within 3 standard deviations of the mean constitute only about 1% of the distribution.
-        These points are atypical of the majority of the other points and are likely to be outliers.
 
-        -> '3' could be a parameter of the method. One might one 5, for instance.
+        Parameters
+        ----------
+        outliers :
 
         Returns
         -------
-        list
-            List containing the outliers
+
         """
-        pass
+        self.serie.dropna(inplace=True)
+        median = np.median(self.serie)
+        self.serie.loc[outliers.index] = median
+        return self.serie
+
+    # TODO pyetst @eguir
+    def replace_by_post_value(self, ouliers):
+        self.serie.dropna(inplace=True)
+        df = self.serie.reset_index()
+        for i in ouliers.index:
+            index = df.loc[df["index"] == i].index.item() - 1
+            value = df.loc[index][1]
+            df.loc[df["index"] == i] = value
+            self.serie.loc[i] = value
+        return self.serie
 
     def _gaussian_mixture_model(self):
         """
@@ -329,3 +411,66 @@ class Cleaner:
             List containing the outliers
         """
         pass
+
+
+#
+# df = pd.read_csv("/home/eguin/PycharmProjects/adclean/notebook/gm_matrix.csv", index_col=0)
+# # print(df.iloc[::, :1])
+#
+# serie = df
+# serie2 = df["SPREAD_GOV_JPN_1Y-GOV_GER_1Y_Z250D"]
+# # print(type(serie2.index[0]))
+# serie2.hist()
+# plt.show()
+# #
+# c1 = Cleaner(serie2)
+# # print("aaaa", len(c1._z_score()), "BBBBB")
+# # print("TEST", len(c1._standard_deviation()), "TEST14")
+#
+# res = c1._standard_deviation()
+# print("SANS REPLACE", res)
+# res2 = c1.replace_by_post_value(res)
+# print("AVEC REPLACE", res2)
+# #
+# c2 = Cleaner(res2)
+# print(c2._zscore())
+
+"---------------"
+#
+# c3 = Cleaner(serie=pd.Series(
+#     [10, 12, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 21, 24, 35, 39, 21, 45, 159, 180],
+#     index=pd.date_range(start="2022-01-01", end="2022-01-25"), name="value"))
+#
+# print(c3.verif_norm())
+length = 3000
+data = np.random.gamma(1, 1, 5)
+ser = pd.Series(data, index=pd.date_range(start="2022-02-12", end="2022-02-16"), name="value")
+ser.hist()
+plt.show()
+c4 = Cleaner(ser)
+print(c4._verif_norm())
+# print(pd.Series(data, index=pd.date_range(start="2013-12-01", end="2022-02-16"), name="value"))
+# print(type(data))
+
+# print(res)
+# print(c1._z_score(), "------", len(c1._z_score()))
+# res = c1._z_score().index
+#
+# serie2.drop(res, inplace=True)
+# serie2.plot()
+# plt.show()
+
+# df = pd.read_csv("/home/eguin/PycharmProjects/adclean/notebook/gm_matrix.csv", index_col=0)
+# print(df.iloc[::, :1])
+
+# serie = df
+# serie2 = df["BOVES_DY 12M_DSTD20_100"].dropna()
+# serie2 = serie2.replace(0, np.nan)
+# serie2.fillna(method="ffill", inplace=True)
+# # serie2.replace(0, np.nan, inplace=True)
+# serie2.plot()
+# plt.show()
+# #
+# c1 = Cleaner(serie2)
+#
+# print(c1._z_score(), "------", len(c1._z_score()))

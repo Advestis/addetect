@@ -34,6 +34,15 @@
 
 ## Usage
 
-```python
 
+Ce package permet de trouver les outliers d'une série, à partir de différentes méthodes.  
+De plus, il permet aussi d'avoir de nombreux information sur la série
+
+```python
+import pandas as pd
+from addetect.detector import Detector
+
+serie = pd.Series([1,2, 3], index = pd.date_range(start='2022-01-01', end="2022-01-03"))
+detector = Detector(serie)
+outliers = Detector._standard_deviation()
 ```

@@ -1,4 +1,5 @@
-from typing import List, Optional, Tuple
+import datetime
+from typing import List, Optional, Tuple, Hashable
 from scipy import stats
 # from statsmodels.tsa.stattools import adfuller
 # from statsmodels.tsa.arima.model import ARIMA
@@ -7,7 +8,6 @@ from scipy import stats
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
 import logging
 
 logger = logging.getLogger(__name__)
@@ -42,6 +42,7 @@ class Detector:
         ValueError
             If any of the detection methods is unknown by the class.
         """
+
         if not isinstance(series, pd.Series):
             raise TypeError(f"The type of the series must be pd.Series and not {type(series)}")
         self._serie = series
@@ -294,7 +295,7 @@ class Detector:
 
         Returns
         -------
-        str
+        datetime
             The first non-null date
         """
         return self.serie.first_valid_index()
@@ -305,13 +306,12 @@ class Detector:
 
         Returns
         -------
-        str
-            The last indenon null date.
-
+        datetime
+            The last index non-null date.
         """
         return self.serie.last_valid_index()
 
-    def _count_date(self):
+    def _count_date(self) -> int:
         """
         Count the number of dates from the first to the last non-null index
 
@@ -323,7 +323,7 @@ class Detector:
 
         return len(self.serie.loc[self._first_date():self._last_date()])
 
-    def _serie_between_first_and_last_index(self):
+    def _serie_between_first_and_last_index(self) -> pd.Series:
         """
         Get the serie between the first and last date non-null.
 
@@ -334,7 +334,7 @@ class Detector:
         """
         return self.serie.loc[self._first_date():self._last_date()]
 
-    def _count_nan_between_index(self):
+    def _count_nan_between_index(self) -> int:
         """
         Count the number of nan between the first and last index
 
@@ -345,7 +345,7 @@ class Detector:
         """
         return self.serie.loc[self._first_date():self._last_date()].isna().sum()
 
-    def _not_jump_date(self, freq="B"):
+    def _not_jump_date(self, freq="B") -> bool:
         """
         Check that no dates are missing according to the frequency
 
@@ -359,7 +359,7 @@ class Detector:
         return len(pd.date_range(start=self._first_date(), end=self._last_date(), freq=freq)) == len(
             self._serie_between_first_and_last_index())
 
-    def _verif_not_duplicate_index(self):
+    def _verif_not_duplicate_index(self) -> bool:
         """
         Check that there are no duplicate indexes.
 
@@ -382,7 +382,7 @@ class Detector:
         """
         return min(self.serie)
 
-    def _get_maximum(self) -> List:
+    def _get_maximum(self) -> float:
         """
         Get the maximum of the serie.
 
@@ -518,7 +518,7 @@ class Detector:
         df_change = df_change[df_change[self.serie.name] == 0].groupby('flat', as_index=False).count()
         return len(df_change[self.serie.name]), df_change[self.serie.name]
 
-    def _max_len_flat(self):
+    def _max_len_flat(self) -> int:
         """
         Compute the longest flat
 
@@ -549,84 +549,3 @@ class Detector:
         plt.savefig("plot/plot")
         if show:
             plt.show()
-
-
-df = pd.read_csv("/home/eguin/PycharmProjects/addetect/notebook/gm_matrix.csv", index_col=0)
-# print(df.iloc[::, :1])
-
-serie = df
-serie2 = df["SWAP_INFLA_EUR_1Y_LAST_Z250D"]
-serie3 = pd.Series([-9, -9, -9, -9, 10, -9, -9, 10, 11, 1, 1, 1, 10, 1, 1, 12, 12, 1, 1, -9], name="aa")
-serie13 = pd.Series([4, -9, 7, 2, 1, 12, 7, 2, 3, 9, -2, 6], index=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
-# print(type(serie2.index[0]))
-# serie2.hist()
-# plt.show()
-# #
-c1 = Detector(serie3)
-print(((c1._outlier_by_min(2))))
-
-# print(c1.nb_flat())
-
-# print(c1._isolation_forest())
-# out = c1._isolation_forest()
-# c1._plot_with_outliers(out, True)
-# c1.drop_outliers(out)
-# c1._plot_with_outliers(out, True)
-# # print(c1._iqr())
-# c2 = Detector(serie2)
-# out2 = c2._zscore()
-# c2._plot_with_outliers(out2, True)
-
-# print(c1.drop_outliers(out2))
-
-# print(len(out))
-#
-# # print("TEST", len(c1._standard_deviation()), "TEST14")
-#
-# res = c1._standard_deviation()
-# print("SANS REPLACE", res)
-# res2 = c1.replace_by_post_value(res)
-# print("AVEC REPLACE", res2)
-# #
-# c2 = Detector(res2)
-# print(c2._zscore())
-
-"---------------"
-#
-# c3 = Detector(serie=pd.Series(
-#     [10, 12, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 21, 24, 35, 39, 21, 45, 159, 180],
-#     index=pd.date_range(start="2022-01-01", end="2022-01-25"), name="value"))
-#
-# print(c3.verif_norm())
-# length = 3000
-# data = np.random.gamma(1, 1, 5)
-# ser = pd.Series(data, index=pd.date_range(start="2022-02-12", end="2022-02-16"), name="value")
-# ser.hist()
-# plt.show()
-# c4 = Detector(ser)
-# print(c4._verif_norm())
-# print(pd.Series(data, index=pd.date_range(start="2013-12-01", end="2022-02-16"), name="value"))
-# print(type(data))
-
-# print(res)
-# print(c1._z_score(), "------", len(c1._z_score()))
-# res = c1._z_score().index
-#
-# serie2.drop(res, inplace=True)
-# serie2.plot()
-# plt.show()
-
-# df = pd.read_csv("/home/eguin/PycharmProjects/addetect/notebook/gm_matrix.csv", index_col=0)
-# print(df.iloc[::, :1])
-
-# serie = df
-# serie2 = df["BOVES_DY 12M_DSTD20_100"].dropna()
-# serie2 = serie2.replace(0, np.nan)
-# serie2.fillna(method="ffill", inplace=True)
-# # serie2.replace(0, np.nan, inplace=True)
-# serie2.plot()
-# plt.show()
-# #
-# c1 = Detector(serie2)
-#
-# print(c1._z_score(), "------", len(c1._z_score()))

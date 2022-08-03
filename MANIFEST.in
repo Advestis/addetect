@@ -6,4 +6,4 @@ prune ./.idea
 prune ./build
 prune ./distinclude
 include versioneer.py
-include adclean/_version.py
+include addetect/_version.py
